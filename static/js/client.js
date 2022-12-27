@@ -9,7 +9,7 @@ const openUpdateQuestionModalHtml = "<button class='entry-item open-update-quest
 const entryHtml = `
     <li class='collection-item'>
         <form method='POST'>
-            <div class='helping-text teal-text lighten-1'></div>
+            <div class='helping-text purple-text lighten-1'></div>
             <div class='entry-container'>
                 <input type='hidden' class='id-input' name='entry_id'>
                 <div class='entry-item entry-container entry-text'>
