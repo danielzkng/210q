@@ -4,8 +4,8 @@ process.env.TZ = config.timezone;
 var https = require('https');
 const fs = require('fs');
 const httpsOptions = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
+  key: fs.readFileSync('/etc/letsencrypt/live/q.danielzkng.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/q.danielzkng.com/fullchain.pem')
 };
 
 var express = require('express');
