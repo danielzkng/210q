@@ -57,3 +57,6 @@ textarea.materialize-textarea:focus:not([readonly])+label {
     background: #5f4b8b !important;
     border-color: #5f4b8b !important;
 }
+i#pencil {
+    color: #5f4b8b;
+}
