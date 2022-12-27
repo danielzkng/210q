@@ -1,4 +1,4 @@
-<nav class="cyan" role="navigation">
+<nav class="purple darken-3" role="navigation">
   <div class="nav-wrapper container">
     <span class="brand-logo hide-on-large-only"><a href="/"><%= title %></a></span>
     <ul class="hide-on-med-and-down">
@@ -28,7 +28,7 @@
 
     <ul id="nav-mobile" class="sidenav">
       <% if (session && session.authenticated) { %>
-      <li class="cyan white-text" style="padding: 0px 20px;">Logged in as <%= session.user_id %></li>
+      <li class="purple darken-3 white-text" style="padding: 0px 20px;">Logged in as <%= session.user_id %></li>
       <% if (session.TA || session.owner) { %>
       <li><form method="POST" action="/options">
       <% if (typeof frozen != 'undefined' && frozen) { %>
