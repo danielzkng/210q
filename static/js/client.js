@@ -150,7 +150,7 @@ function buildTAEntry(entry) {
     var elt = $(entryHtml);
     elt.data("entryId", entry.id);
     elt.find(".id-input").val(entry.id);
-    elt.find(".entry-name").html(`${entry.name} (${entry.user_id})`);
+    elt.find(".entry-name").html(`${entry.name.replace(/</g, "&lt;")} (${entry.user_id.replace(/</g, "&lt;")})`);
     elt.find(".entry-question").html(`${entry.cooldown_override ? '\u21BB ' : ''}[${entry.topic_name}] ${entry.question.replace(/</g, "&lt;")}`);
 
     if (entry.status == 1 && ta_id == entry.ta_id) {

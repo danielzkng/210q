@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var Sequelize = require('sequelize');
 var Promise = require("bluebird");
+var sanitize = require('sanitize-html');
 
 var config = require("../config.json");
 var model = require("../model.js");
