@@ -1,7 +1,13 @@
 var config = require("./config.json");
 process.env.TZ = config.timezone;
 
-var http = require('http');
+var https = require('https');
+const fs = require('fs');
+const httpsOptions = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -18,7 +24,7 @@ var gettime = require("./routes/gettime.js");
 var settings = require("./routes/settings.js");
 
 var app = express();
-var server = http.createServer(app);
+var server = https.createServer(httpsOptions, app);
 realtime.init(server);
 notiftime.init();
 waittimes.init();
