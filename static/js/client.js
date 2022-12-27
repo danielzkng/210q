@@ -2,8 +2,8 @@ const fixQuestionIconHtml = "<i class='qedit-icon material-icons' style='font-si
 const removeHtml = "<button class='entry-item remove-button hide waves-effect waves btn-flat grey lighten-3 grey-text text-darken-2' name='action' value='REM'>Remove</button>";
 const cancelHtml = "<button class='entry-item cancel-button hide waves-effect waves btn-flat grey lighten-3 grey-text text-darken-2' name='action' value='CANCEL'>Cancel</button>";
 const requestUpdateHtml = `<button class='entry-item fix-question-button hide waves-effect waves btn-flat grey lighten-2 grey-text text-darken-3' name='action' value='REQUEST-UPDATE'>${fixQuestionIconHtml}</button>`;
-const doneHtml = "<button class='entry-item done-button hide waves-effect waves-light btn blue' name='action' value='DONE'>Done</button>";
-const helpHtml = "<button class='entry-item help-button hide waves-effect waves-light btn blue' name='action' value='HELP'>Help</button>";
+const doneHtml = "<button class='entry-item done-button hide waves-effect waves-light btn deep-purple darken-1' name='action' value='DONE'>Done</button>";
+const helpHtml = "<button class='entry-item help-button hide waves-effect waves-light btn deep-purple darken-1' name='action' value='HELP'>Help</button>";
 const openUpdateQuestionModalHtml = "<button class='entry-item open-update-question-button hide waves-effect waves btn-flat grey lighten-2 grey-text text-darken-3'>Update Question</button>";
 
 const entryHtml = `
@@ -165,7 +165,7 @@ function buildTAEntry(entry) {
             elt.find(".help-button").removeClass("hide");
             if (entry.update_requested) {
                 elt.find(".help-button")
-                    .removeClass("waves-light btn blue")
+                    .removeClass("waves-light btn deep-purple darken-1")
                     .addClass("waves btn-flat grey lighten-3 grey-text text-darken-2");
                 elt.find(".helping-text").text("Student is updating question");
             } else {
@@ -365,7 +365,7 @@ socket.on("request-update", function(message) {
                 if (!ta_helping_id) {
                     $(item).find(".remove-button").removeClass("hide");
                     $(item).find(".help-button").removeClass("hide")
-                        .removeClass("waves-light btn blue")
+                        .removeClass("waves-light btn deep-purple darken-1")
                         .addClass("waves btn-flat grey lighten-3 grey-text text-darken-2");
                 }
                 $(item).find(".helping-text").text("Student is updating question");
@@ -390,7 +390,7 @@ socket.on("update-question", function(message) {
             if (!ta_helping_id) {
                 $(item).find(".remove-button").removeClass("hide");
                 $(item).find(".help-button").removeClass("hide")
-                    .addClass("waves-light btn blue")
+                    .addClass("waves-light btn deep-purple darken-1")
                     .removeClass("waves btn-flat grey lighten-3 grey-text text-darken-2");
                 $(item).find(".fix-question-button").removeClass("hide");
             }
@@ -481,7 +481,7 @@ socket.on("cancel", function(message) {
                 // revert color if student was helped while updating question
                 $(item).find(".help-button").removeClass("hide")
                     .removeClass("waves btn-flat grey lighten-3 grey-text text-darken-2")
-                    .addClass("waves-light btn blue");
+                    .addClass("waves-light btn deep-purple darken-1");
                 $(item).find(".fix-question-button").removeClass("hide");
             }
         }
