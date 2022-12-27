@@ -18,7 +18,7 @@ var gettime = require("./routes/gettime.js");
 var settings = require("./routes/settings.js");
 
 var app = express();
-var server = http.Server(app);
+var server = http.createServer(app);
 realtime.init(server);
 notiftime.init();
 waittimes.init();
