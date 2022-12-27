@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<%- include("head.ejs") %>
+<body>
+<%- include("header.ejs") %>
+<div class="container">
+  <div id="message" class="center">
+  <span id="message_content">
+  <%_ if (message) { _%>
+    <%- message %>
+  <%_ } _%>
+  </span>
+  <%_ if (message && session && (session.TA || session.owner)) { _%>
+    <a href="#" onclick="editMessage(); return false;" style="vertical-align: -0.25em;"><i class="material-icons">mode_edit</i></a>
+  <%_ } else if (!message && session && (session.TA || session.owner)) { _%>
+  <button class='btn-flat light-blue-text text-darken-1' onclick="editMessage(); return false;">Add a message</button>
+  <%_ } _%>
+  </div>
+  <%_ if (session && (session.TA || session.owner)) { _%>
+  <form id="message_form" method='POST' action="/options" class='center input-field'>
+    <div class="container">
+      <textarea id="message" placeholder="Most basic HTML tags are supported" name="message" class="materialize-textarea"><%= message %></textarea>
+    </div>
+    <br>
+    <button type='button' class='btn-flat' onclick="cancelEditMessage(); return false;">Cancel</button>
+    <button type='submit' class='btn waves-effect waves-light cyan'>Submit</button>
+  </form>
+  <%_ } _%>
+
+  <div id="queue_container">
+  <div id="status">
+    <div class="inner">
+      <div id="status_content"></div>
+    </div>
+  </div>
+  <ul class="collection" id="queue"></ul>
+  </div>
+
+  <div id="add_form">
+  <h6 class="center" style="font-size: 120%;">
+    <%_ if (session && (session.TA || session.owner)) { _%>
+    Add a student to the queue:
+    <%_ } else { _%>
+    Add your name to the queue:
+    <%_ } _%>
+  </h6>
+  <form method="POST" class="row">
+  <div class="input-field inline col l4 m4 s12">
+    <input id="name" name="name" type="text" required
+    <%_ if (session && !session.TA && !session.owner) { _%>
+    value="<%= session.name %>"
+    <%_ } _%>
+    >
+    <label for="name">Name</label>
+  </div>
+  <div class="input-field inline col l4 m4 s12">
+    <input id="user_id" name="user_id" type="text" pattern="[A-Za-z0-9]*" minlength=3 maxlength=8 required
+    <%_ if (session && !session.TA && !session.owner) { _%>
+    value="<%= session.user_id %>"
+    <%_ if (session.authenticated && !session.TA && !session.owner) { _%>
+    readonly="true"
+    <%_ }} _%>
+    >
+    <label for="user_id">Andrew ID</label>
+  </div>
+  <div class="input-field inline col l4 m4 s12">
+    <select id="topic" class="topic" name="topic_id" required>
+        <option value="" disabled selected hidden>Choose a topic</option>
+      <%_ topics.forEach(function(topic) { _%>
+        <option value="<%= topic.id %>"><%= topic.name %></option>
+      <%_ }); _%>
+        <option value="0">other</option>
+    </select>
+    <label for="topic">What would you like help with?</label>
+  </div>
+  <div class="input-field inline col l10 m10 s12">
+      <textarea id="question" name="question" type="text" minlength=3 maxlength=255 data-length="255" required class="materialize-textarea"></textarea>
+      <label for="question">Question</label>
+  </div>
+  <div class="input-field inline col l2 m2 s12 center-btn">
+    <button class="waves-effect waves-light btn cyan" name="action" value="ADD">Enter</button>
+  </div>
+  </form>
+  </div>
+  <h6 id="frozen_message" class="center" style="font-size: 120%;">
+    The queue is <strong>frozen</strong>. No new signups are allowed.
+  </h6>
+</div>
+
+<div id="help_modal" class="modal">
+  <div class="modal-content center-align">
+    <h4>It's your turn to get help!</h4>
+    <p><span id="modal_ta_name"></span> is ready to help you.</p>
+    <a id="modal_ta_video_chat_url" href="javascript:;" target="_blank"><button class="waves-effect waves-light btn cyan">Join Video Chat</button></a>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript:;" class="modal-close waves-effect light-blue-text text-darken-1 btn-flat">Done</a>
+  </div>
+</div>
+
+<div id="cooldown_modal" class="modal">
+  <div class="modal-content center-align">
+    <h4>You've just been helped</h4>
+    <p>Use this time to think independently about the problem you're facing, try a different approach, or use other class resources to learn more about the topic. <strong>Please wait at least <span id="modal_cooldown_time"></span> before adding your name to the queue again.</strong></p>
+    <p id="cooldown_override_text">If you have specific circumstances that require you to re-enter the queue immediately, please ask a TA to manually add you.</p>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript:;" class="modal-close waves-effect light-blue-text text-darken-1 btn-flat">Close</a>
+  </div>
+</div>
+
+
+<div id="update_question_modal" class="modal">
+  <div class="modal-content center-align">
+    <h4>Please update your question!</h4>
+    <p>Before we can help, we need some more details from you.</p>
+    <p>Especially for homework problems, we can help you more effectively if we know <strong>what you've tried and/or already understand</strong> in addition to what you're looking for guidance on.
+    <%_ if (guide_url) { _%>
+        Be sure to read the
+        <a id="guide_url" href="<%= guide_url %>" target="_blank">
+          Asking Questions
+        </a> guide for more on this!
+    <%_ } _%>
+    </p>
+    <p>If you're having trouble rewording your question, enter "Need help with question" to ask a TA for help.</p>
+    <form method='POST'>
+      <input type='hidden' class='id-input' name='entry_id'>
+        <div class="row">
+          <div class="input-field col l12 m12 s12">
+            <textarea id="question" name="question" type="text" minlength=3 maxlength=255 data-length="255" required class="materialize-textarea"></textarea>
+            <label for="question">Question (max 255 characters)</label>
+          </div>
+        </div>
+      <button class='waves-effect waves-light btn cyan' name='action' value='UPDATE-QUESTION'>Update Question</button>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript:;" class="modal-close waves-effect light-blue-text text-darken-1 btn-flat">Close</a>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/client.js"></script>
+<script type="text/javascript">
+
+var seq = <%= seq %>;
+<%_ if (session && session.TA) { _%>
+var ta_id = <%= session.TA.id %>;
+var ta_helping_id = <%= session.TA.helping_id ? session.TA.helping_id : "null" %>;
+<%_ } else { _%>
+var ta_id = null;
+var ta_helping_id = null;
+<%_ } _%>
+var is_owner = <%- (session && session.owner) ? "true" : "false" -%>;
+var waittimes = <%- JSON.stringify(waittimes); -%>;
+
+$(document).ready(function() {
+  <%_ if (toast) { _%>
+    M.toast({
+        html: "<%= toast %>",
+        duration: 4000
+    });
+  <%_ } _%>
+
+<%_ var sawSelf = false; _%>
+<%_ entries.forEach(function(entry) { _%>
+  <%_ if (session && (entry.session_id == session.id || session.authenticated && entry.user_id == session.user_id)) { _%>
+    <%_ sawSelf = true; _%>
+    $("#queue").append(buildMyEntry(<%- JSON.stringify({
+        id: entry.id,
+        status: entry.status,
+        name: entry.name,
+        user_id: entry.user_id,
+        topic_name: entry.topic ? entry.topic.name : "other",
+        ta_full_name: entry.TA ? entry.TA.full_name : "",
+        question: entry.question,
+        update_requested: entry.update_requested
+    }).replace(/<\//g, "<\\/"); %>));
+    <%_ if (entry.status == 1) { %>
+      $("#modal_ta_name").text("<%= entry.TA.full_name %>");
+      <% if (entry.TA.video_chat_url && entry.TA.video_chat_url.length > 0) { %>
+        $("#modal_ta_video_chat_url").show();
+        $("#modal_ta_video_chat_url").attr("href", "<%= entry.TA.video_chat_url %>");
+      <% } else { %>
+        $("#modal_ta_video_chat_url").hide();
+      <% } %>
+      M.Modal.getInstance($("#help_modal")).open();
+    <%_ } else if (entry.update_requested) { %>
+        $("#update_question_modal").find(".id-input").val(<%= entry.id %>);
+        M.Modal.getInstance($("#update_question_modal")).open();
+    <%_ } %>
+  <%_ } else if (session && (session.TA || session.owner)) { _%>
+    $("#queue").append(buildTAEntry(<%- JSON.stringify({
+        id: entry.id,
+        status: entry.status,
+        name: entry.name,
+        user_id: entry.user_id,
+        ta_id: entry.TA ? entry.TA.id : null,
+        topic_name: entry.topic ? entry.topic.name : "other",
+        ta_full_name: entry.TA ? entry.TA.full_name : "",
+        question: entry.question,
+        cooldown_override: entry.cooldown_override,
+        update_requested: entry.update_requested
+  }).replace(/<\//g, "<\\/"); %>));
+  <%_ } else { _%>
+    $("#queue").append(buildStudentEntry(<%- JSON.stringify({
+        id: entry.id,
+        status: entry.status,
+        ta_full_name: entry.TA ? entry.TA.full_name : ""
+    }); %>));
+  <%_ } _%>
+<%_ }); _%>
+
+  <%_ if ((!sawSelf && !frozen) || (session && (session.TA || session.owner))) { _%>
+    $("#add_form").show();
+  <%_ } _%>
+  <%_ if (frozen) { _%>
+    $("#frozen_message").show();
+    $("#cooldown_override_text").hide();
+  <%_ } _%>
+
+    positionOverlay();
+    updateStatus();
+});
+
+</script>
+<%- include("footer.ejs") %>
+</body>
+</html>
