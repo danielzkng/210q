@@ -67,3 +67,10 @@ app.get("/settings", settings.get);
 app.post("/settings", settings.post);
 
 server.listen(config.server_port);
+
+// Redirect from http port 80 to https
+var http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(80);
