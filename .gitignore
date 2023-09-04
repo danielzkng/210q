@@ -1,6 +1,8 @@
 *.pem
+pat.txt
 node_modules
 config.json
 .vscode
 *.DS_Store
+static/.DS_Store
 static/img/.DS_Store
