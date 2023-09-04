@@ -37,6 +37,7 @@
   </div>
 
   <div id="add_form">
+  <%_ if (session && session.authenticated) { _%> 
   <h6 class="center" style="font-size: 120%;">
     <%_ if (session && (session.TA || session.owner)) { _%>
     Add a student to the queue:
@@ -81,6 +82,11 @@
     <button class="waves-effect waves-light btn purple darken-3" name="action" value="ADD">Enter</button>
   </div>
   </form>
+  <%_ } else { _%>
+  <h6 class="center" style="font-size: 120%;">
+    Please log in to add yourself to the queue!
+  </h6>
+  <%_ } _%>
   </div>
   <h6 id="frozen_message" class="center" style="font-size: 120%;">
     The queue is <strong>frozen</strong>. No new signups are allowed.

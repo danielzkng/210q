@@ -137,7 +137,7 @@ exports.update_slack = function() {
         if (webhook_url && webhook_url != "") {
             slack = new SlackWebhook(webhook_url, {
                 defaults: {
-                    "username": "QueueBot",
+                    "username": "MooBot",
                     "icon_url": config.protocol + "://" + config.domain + "/img/cmuq_small.png"
                 }
             });
